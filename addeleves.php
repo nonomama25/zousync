@@ -82,8 +82,8 @@ $promotions = $pdo->query('SELECT id_promotion, nom FROM promotion ORDER BY nom'
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Ajouter un élève</title>
-    <link rel="stylesheet" href="style.css">
-    <link rel="stylesheet" href="menupromo.css">
+    <link rel="stylesheet" href="eleve.css">
+    <link rel="stylesheet" href="eleve.css">
     <style>
         .form-container {
             max-width: 500px;

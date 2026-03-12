@@ -26,8 +26,8 @@ $eleves = $stmt->fetchAll();
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Tous les élèves</title>
-    <link rel="stylesheet" href="style.css">
-    <link rel="stylesheet" href="menupromo.css">
+    <link rel="stylesheet" href="eleve.css">
+    <link rel="stylesheet" href="eleve.css">
 </head>
 <body>
     <div class="topbar">
