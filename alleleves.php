@@ -34,7 +34,7 @@ $eleves = $stmt->fetchAll();
         <div class="title">Tous les élèves</div>
         <div class="topbar-right">
             <span class="user-name">John Doe</span>
-            <img src="image/user-avatar.png" alt="Avatar" class="user-avatar">
+            <img src="image/user-avatar.png" alt="Avatar" class="topbar-avatar">
         </div>
     </div>
 
