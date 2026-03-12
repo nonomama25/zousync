@@ -2,8 +2,8 @@
 // --- Connexion à la base ---
 $route = new PDO(
     'mysql:host=localhost;dbname=tp;charset=utf8',
-    'user',   // utilisateur MySQL (souvent root sous Laragon)
-    'password'        // mot de passe MySQL (souvent vide sous Laragon)
+    'user',   // utilisateur MySQL
+    'pasword'        // mot de passe MySQL
 );
 
 // --- Vérification du formulaire ---
