@@ -47,7 +47,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
     } else {
         $message = "<div class='alert alert-danger text-center'>Identifiant ou mot de passe incorrect</div>";
     }
-}
+
 ?>
 
 <!DOCTYPE html>
