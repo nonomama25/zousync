@@ -19,16 +19,15 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
     $prenom = $_POST['identifier'];
     $mdp = $_POST['password'];
 
-    $sql = "SELECT * FROM utilisateur WHERE prenom = :prenom AND mot_de_passe = :mdp";
+    $sql = "SELECT * FROM utilisateur WHERE prenom = :prenom";
     $stmt = $route->prepare($sql);
     $stmt->execute([
-        ':prenom' => $prenom,
-        ':mdp' => $mdp
+        ':prenom' => $prenom
     ]);
 
     $user = $stmt->fetch();
 
-    if ($user) {
+    if ($user && password_verify($mdp, $user['mot_de_passe'])) {
         // Redirection vers la page eleve.php
         header("Location: eleve.php");
         exit;
