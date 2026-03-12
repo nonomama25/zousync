@@ -1,5 +1,6 @@
 <?php
 // Connexion à la base de données
+// Connexion à la base de données
 $DB_HOST = '127.0.0.1';
 $DB_NAME = 'tp';
 $DB_USER = 'root';
@@ -15,6 +16,7 @@ try {
 }
 
 // Récupérer toutes les promotions
+$promotions = $pdo->query('SELECT id_promotion, nom FROM promotion ORDER BY nom')->fetchAll();
 $promotions = $pdo->query('SELECT id_promotion, nom FROM promotion ORDER BY nom')->fetchAll();
 ?>
 <!DOCTYPE html>
