@@ -1,10 +1,11 @@
 <?php
+session_start();
 // --- Connexion à la base ---
 try {
     $route = new PDO(
         'mysql:host=localhost;dbname=tp;charset=utf8',
-        'user',   // utilisateur MySQL
-        'password'        // mot de passe MySQL
+        'root',   // utilisateur MySQL (Laragon par défaut : 'root')
+        ''        // mot de passe MySQL (Laragon par défaut : vide)
     );
     $route->setAttribute(PDO::ATTR_ERRMODE, PDO::ERRMODE_EXCEPTION);
 } catch (PDOException $e) {
@@ -19,16 +20,18 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
     $prenom = $_POST['identifier'];
     $mdp = $_POST['password'];
 
-    $sql = "SELECT * FROM utilisateur WHERE prenom = :prenom AND mot_de_passe = :mdp";
+    $sql = "SELECT * FROM utilisateur WHERE prenom = :prenom";
     $stmt = $route->prepare($sql);
     $stmt->execute([
-        ':prenom' => $prenom,
-        ':mdp' => $mdp
+        ':prenom' => $prenom
     ]);
 
     $user = $stmt->fetch();
 
-    if ($user) {
+    // password_verify compare le mot de passe en clair avec celui crypté dans la base
+    if ($user && password_verify($mdp, $user['mot_de_passe'])) {
+        $_SESSION['utilisateur'] = $user; // Sauvegarde de la session de l'utilisateur
+        
         if ($user["est_admin"] == 1) {
             header("Location: menupromo.php");
         } else {
@@ -76,9 +79,6 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
         </div>
 
         <button type="submit" class="btn btn-primary w-100 btn-custom">Se connecter</button>
-
-        </div>
-
 
     </form>
 </div>
