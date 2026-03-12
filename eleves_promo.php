@@ -26,6 +26,9 @@ $stmt = $pdo->prepare('SELECT nom FROM promotion WHERE id_promotion = ?');
 $stmt->execute([$id_promotion]);
 $promo = $stmt->fetchColumn();
 
+$stmt = $pdo->prepare('SELECT * FROM utilisateur WHERE id_promotion = ?');
+$stmt->execute([$id_promotion]);
+$eleves = $stmt->fetchAll();
 ?>
 <!DOCTYPE html>
 <html lang="fr">
@@ -65,7 +68,7 @@ $promo = $stmt->fetchColumn();
                     <p>Aucun élève dans cette promotion.</p>
                 <?php else: ?>
                     <?php foreach ($eleves as $e): ?>
-                        <div class="card"><?= htmlspecialchars($e['Nom']) ?></div>
+                        <div class="card"><?= htmlspecialchars($e['nom']) ?></div>
                     <?php endforeach; ?>
                 <?php endif; ?>
             </div>
