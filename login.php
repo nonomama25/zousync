@@ -27,13 +27,13 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
 
     $user = $stmt->fetch();
 
-    if ($user && password_verify($mdp, $user['mot_de_passe'])) {
-        // Redirection vers la page eleve.php
-        header("Location: eleve.php");
-        exit;
-    } else {
-        $message = "<div class='alert alert-danger text-center'>Identifiant ou mot de passe incorrect</div>";
-    }
+     if ($user && $user['mot_de_passe'] === sha1($mdp)) {
+
+        if ($user["est_admin"] == 0) {
+            header("Location: menupromo.php");
+        } else {
+            header("Location: eleves.php");
+        }
 }
 ?>
 
