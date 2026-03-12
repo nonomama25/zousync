@@ -29,23 +29,12 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
     $user = $stmt->fetch();
 
     if ($user) {
-        if ($user["est_admin"] == 0) {
-            header("Location: menupromo.php");
-        } else {
-            header("Location: eleve.php");
-        }
-        exit;
-    } else {
-        $message = "<div class='alert alert-danger text-center'>Identifiant ou mot de passe incorrect</div>";
-    }
         if ($user["est_admin"] == 1) {
             header("Location: menupromo.php");
         } else {
             header("Location: eleve.php");
         }
         exit;
-    } else {
-        $message = "<div class='alert alert-danger text-center'>Identifiant ou mot de passe incorrect</div>";
     }
 
 ?>
