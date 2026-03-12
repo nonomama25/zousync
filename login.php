@@ -4,7 +4,7 @@ try {
     $route = new PDO(
         'mysql:host=localhost;dbname=tp;charset=utf8',
         'user',   // utilisateur MySQL
-        'pasword'        // mot de passe MySQL
+        'password'        // mot de passe MySQL
     );
     $route->setAttribute(PDO::ATTR_ERRMODE, PDO::ERRMODE_EXCEPTION);
 } catch (PDOException $e) {
