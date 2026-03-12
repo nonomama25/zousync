@@ -17,7 +17,7 @@ $message = "";
 if ($_SERVER['REQUEST_METHOD'] === 'POST') {
 
     $prenom = $_POST['identifier'];
-    $mdp = $_POST['password'];}
+    $mdp = $_POST['password'];
 
     $sql = "SELECT * FROM utilisateur WHERE prenom = :prenom AND mot_de_passe = :mdp";
     $stmt = $route->prepare($sql);
@@ -35,7 +35,10 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
             header("Location: eleve.php");
         }
         exit;
+    } else {
+        $message = "<div class='alert alert-danger text-center'>Identifiant ou mot de passe incorrect</div>";
     }
+}
 
 ?>
 
