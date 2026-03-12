@@ -19,21 +19,34 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
     $prenom = $_POST['identifier'];
     $mdp = $_POST['password'];
 
-    $sql = "SELECT * FROM utilisateur WHERE prenom = :prenom";
+    $sql = "SELECT * FROM utilisateur WHERE prenom = :prenom AND mot_de_passe = :mdp";
     $stmt = $route->prepare($sql);
     $stmt->execute([
-        ':prenom' => $prenom
+        ':prenom' => $prenom,
+        ':mdp' => $mdp
     ]);
 
     $user = $stmt->fetch();
 
-     if ($user && $user['mot_de_passe'] === sha1($mdp)) {
-
+    if ($user) {
         if ($user["est_admin"] == 0) {
             header("Location: menupromo.php");
         } else {
-            header("Location: eleves.php");
+            header("Location: eleve.php");
         }
+        exit;
+    } else {
+        $message = "<div class='alert alert-danger text-center'>Identifiant ou mot de passe incorrect</div>";
+    }
+        if ($user["est_admin"] == 0) {
+            header("Location: menupromo.php");
+        } else {
+            header("Location: eleve.php");
+        }
+        exit;
+    } else {
+        $message = "<div class='alert alert-danger text-center'>Identifiant ou mot de passe incorrect</div>";
+    }
 }
 ?>
 
