@@ -20,10 +20,10 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
     $prenom = $_POST['identifier'];
     $mdp = $_POST['password'];
 
-    $sql = "SELECT * FROM utilisateur WHERE prenom = :prenom";
+    $sql = "SELECT * FROM utilisateur WHERE email = :email";
     $stmt = $route->prepare($sql);
     $stmt->execute([
-        ':prenom' => $prenom
+        ':email' => $prenom
     ]);
 
     $user = $stmt->fetch();
@@ -35,11 +35,11 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
         if ($user["est_admin"] == 1) {
             header("Location: menupromo.php");
         } else {
-            header("Location: eleve.php");
+            header("Location: dashboard_eleve.php");
         }
         exit;
     } else {
-        $message = "<div class='alert alert-danger text-center'>Identifiant ou mot de passe incorrect</div>";
+        $message = "<div class='alert alert-danger text-center'>Email ou mot de passe incorrect</div>";
     }
 }
 
@@ -69,8 +69,8 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
     <!-- Formulaire -->
     <form method="POST" action="">
         <div class="mb-3">
-            <label for="identifier" class="form-label"><i class="fas fa-user"></i> Identifiant</label>
-            <input type="text" class="form-control input-custom" id="identifier" name="identifier" placeholder="Entrez votre identifiant" required>
+            <label for="identifier" class="form-label"><i class="fas fa-user"></i> Email</label>
+            <input type="text" class="form-control input-custom" id="identifier" name="identifier" placeholder="Entrez votre email" required>
         </div>
 
         <div class="mb-3">
@@ -81,6 +81,10 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
         <button type="submit" class="btn btn-primary w-100 btn-custom">Se connecter</button>
 
     </form>
+
+    <div class="mt-3 text-center">
+        <a href="create_admin.php" class="btn btn-secondary">Créer un compte admin</a>
+    </div>
 </div>
 
 

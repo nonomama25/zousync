@@ -1,4 +1,6 @@
 <?php
+session_start();
+
 // Connexion à la base de données
 $DB_HOST = '127.0.0.1';
 $DB_NAME = 'tp';
@@ -14,14 +16,19 @@ try {
     die('Erreur DB: ' . htmlspecialchars($e->getMessage()));
 }
 
-// Vérifier si l'utilisateur est connecté et n'est pas admin
-session_start();
-if (!isset($_SESSION['user_id']) || (isset($_SESSION['est_admin']) && $_SESSION['est_admin'] == 1)) {
-    header('Location: login.php'); // Rediriger vers la page de connexion si non connecté ou admin
+// Vérifier si l'utilisateur est connecté
+if (!isset($_SESSION['utilisateur'])) {
+    header('Location: login.php');
     exit;
 }
 
-$user_id = $_SESSION['user_id'];
+// Vérifier si l'utilisateur est admin (rediriger si admin)
+if ($_SESSION['utilisateur']['est_admin'] == 1) {
+    header('Location: login.php');
+    exit;
+}
+
+$user_id = $_SESSION['utilisateur']['id'];
 
 // Récupérer les TP en cours pour l'élève (basé sur sa promotion)
 $stmt = $pdo->prepare('
@@ -91,7 +98,7 @@ foreach ($tps as $tp) {
     <div class="topbar">
         <div class="title">Dashboard Élève</div>
         <div class="topbar-right">
-            <span class="user-name"><?php echo htmlspecialchars($_SESSION['nom'] ?? 'Élève'); ?></span>
+            <span class="user-name"><?php echo htmlspecialchars($_SESSION['utilisateur']['nom']); ?></span>
             <img src="image/user-avatar.png" alt="Avatar" class="user-avatar">
         </div>
     </div>
