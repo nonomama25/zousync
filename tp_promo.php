@@ -51,7 +51,24 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['add_tp'])) {
         try {
             $stmt = $pdo->prepare('INSERT INTO tp (titre, description, date_creation, id_promotion) VALUES (?, ?, NOW(), ?)');
             $stmt->execute([$titre, $description, $id_promotion]);
-            $success = 'TP ajouté avec succès.';
+            $id_tp = $pdo->lastInsertId();
+
+            // Insérer les tâches si présentes
+            if (isset($_POST['taches']) && is_array($_POST['taches'])) {
+                foreach ($_POST['taches'] as $tache) {
+                    $libelle = trim($tache['libelle'] ?? '');
+                    $description_tache = trim($tache['description'] ?? '');
+                    $priorite = $tache['priorite'] ?? 'moyenne';
+                    $ordre = isset($tache['ordre']) ? (int)$tache['ordre'] : 1;
+
+                    if ($libelle !== '') {
+                        $stmt = $pdo->prepare('INSERT INTO tache (libelle, description, priorite, ordre, id_tp) VALUES (?, ?, ?, ?, ?)');
+                        $stmt->execute([$libelle, $description_tache, $priorite, $ordre, $id_tp]);
+                    }
+                }
+            }
+
+            $success = 'TP et tâches ajoutés avec succès.';
         } catch (PDOException $e) {
             $errors[] = 'Erreur: ' . htmlspecialchars($e->getMessage());
         }
@@ -112,12 +129,110 @@ foreach ($promotions as $promo) {
     <link rel="stylesheet" href="eleve.css">
     <style>
         .form-container {
-            max-width: 600px;
-            background: #fff;
-            padding: 30px;
-            border-radius: 8px;
-            box-shadow: 0 2px 8px rgba(0,0,0,0.1);
+            max-width: 800px;
+            background: linear-gradient(135deg, #f5f7fa 0%, #c3cfe2 100%);
+            padding: 40px;
+            border-radius: 15px;
+            box-shadow: 0 10px 30px rgba(0,0,0,0.2);
+            margin-bottom: 40px;
+            border: 1px solid #e0e0e0;
+        }
+        .form-container h2 {
+            text-align: center;
+            color: #333;
             margin-bottom: 30px;
+            font-size: 28px;
+            font-weight: bold;
+        }
+        .form-group {
+            margin-bottom: 20px;
+        }
+        .form-group label {
+            display: block;
+            margin-bottom: 8px;
+            font-weight: 600;
+            color: #555;
+            font-size: 16px;
+        }
+        .form-group input, .form-group select, .form-group textarea {
+            width: 100%;
+            padding: 12px;
+            border: 2px solid #ddd;
+            border-radius: 8px;
+            font-size: 16px;
+            transition: border-color 0.3s;
+        }
+        .form-group input:focus, .form-group select:focus, .form-group textarea:focus {
+            outline: none;
+            border-color: #007bff;
+            box-shadow: 0 0 8px rgba(0, 123, 255, 0.3);
+        }
+        .form-group textarea {
+            height: 80px;
+            resize: vertical;
+        }
+        .form-row {
+            display: flex;
+            gap: 15px;
+        }
+        .half {
+            flex: 1;
+        }
+        .tache-group {
+            background: #f8f9fa;
+            padding: 20px;
+            border-radius: 8px;
+            margin-bottom: 15px;
+            border-left: 4px solid #fc8b01;
+            position: relative;
+        }
+        .btn-add-tache {
+            background: #28a745;
+            color: white;
+            border: none;
+            padding: 10px 20px;
+            border-radius: 6px;
+            cursor: pointer;
+            font-size: 16px;
+            margin: 20px 0;
+            transition: background 0.3s;
+        }
+        .btn-add-tache:hover {
+            background: #218838;
+        }
+        .btn-remove {
+            background: #dc3545;
+            color: white;
+            border: none;
+            padding: 8px 16px;
+            border-radius: 6px;
+            cursor: pointer;
+            font-size: 14px;
+            position: absolute;
+            top: 10px;
+            right: 10px;
+            transition: background 0.3s;
+        }
+        .btn-remove:hover {
+            background: #c82333;
+        }
+        .form-actions {
+            text-align: center;
+            margin-top: 30px;
+        }
+        .btn-submit {
+            background: linear-gradient(135deg, #007bff, #0056b3);
+            color: white;
+            border: none;
+            padding: 15px 30px;
+            border-radius: 8px;
+            cursor: pointer;
+            font-size: 18px;
+            font-weight: bold;
+            transition: transform 0.2s;
+        }
+        .btn-submit:hover {
+            transform: translateY(-2px);
         }
         .promo-section {
             margin-bottom: 40px;
@@ -196,7 +311,7 @@ foreach ($promotions as $promo) {
         <button class="nav-btn" onclick="window.location.href='index.php'">Accueil</button>
         <button class="nav-btn" onclick="window.location.href='menupromo.php'">Promotions</button>
         <button class="nav-btn" onclick="window.location.href='alleleves.php'">Eleves</button>
-        <button class="nav-btn" onclick="window.location.href='travauxpratique.php'">Travaux Pratiques</button>
+        <button class="nav-btn" onclick="window.location.href='tp_promo.php'">Travaux Pratiques</button>
         <button class="nav-btn" onclick="window.location.href='parametre.php'">Paramètres</button>
     </nav>
 
@@ -219,25 +334,58 @@ foreach ($promotions as $promo) {
 
         <div class="form-container">
             <h2>Ajouter un nouveau TP</h2>
-            <form method="post" action="tp_promo.php">
-                <div style="margin-bottom: 15px;">
+            <form method="post" action="tp_promo.php" id="tp-form">
+                <div class="form-group">
                     <label for="id_promotion">Promotion *</label>
-                    <select id="id_promotion" name="id_promotion" required style="width: 100%; padding: 8px; margin-top: 5px;">
+                    <select id="id_promotion" name="id_promotion" required>
                         <option value="">-- Sélectionner une promotion --</option>
                         <?php foreach ($promotions as $p): ?>
                             <option value="<?= $p['id_promotion'] ?>"><?= htmlspecialchars($p['nom']) ?></option>
                         <?php endforeach; ?>
                     </select>
                 </div>
-                <div style="margin-bottom: 15px;">
+                <div class="form-group">
                     <label for="titre">Titre du TP *</label>
-                    <input type="text" id="titre" name="titre" required style="width: 100%; padding: 8px; margin-top: 5px;">
+                    <input type="text" id="titre" name="titre" required>
                 </div>
-                <div style="margin-bottom: 15px;">
+                <div class="form-group">
                     <label for="description">Description *</label>
-                    <textarea id="description" name="description" required style="width: 100%; padding: 8px; margin-top: 5px; height: 80px;"></textarea>
+                    <textarea id="description" name="description" required></textarea>
                 </div>
-                <button type="submit" name="add_tp" class="btn-add">Ajouter TP</button>
+
+                <div id="taches-container">
+                    <h3>Tâches associées</h3>
+                    <div class="tache-group" data-index="0">
+                        <div class="form-group">
+                            <label>Libellé de la tâche *</label>
+                            <input type="text" name="taches[0][libelle]" required>
+                        </div>
+                        <div class="form-group">
+                            <label>Description de la tâche</label>
+                            <textarea name="taches[0][description]"></textarea>
+                        </div>
+                        <div class="form-row">
+                            <div class="form-group half">
+                                <label>Priorité</label>
+                                <select name="taches[0][priorite]">
+                                    <option value="basse">Basse</option>
+                                    <option value="moyenne">Moyenne</option>
+                                    <option value="haute">Haute</option>
+                                </select>
+                            </div>
+                            <div class="form-group half">
+                                <label>Ordre</label>
+                                <input type="number" name="taches[0][ordre]" value="1" min="1">
+                            </div>
+                        </div>
+                        <button type="button" class="btn-remove" onclick="removeTache(this)">Supprimer</button>
+                    </div>
+                </div>
+                <button type="button" id="add-tache-btn" class="btn-add-tache">Ajouter une tâche</button>
+
+                <div class="form-actions">
+                    <button type="submit" name="add_tp" class="btn-submit">Ajouter TP</button>
+                </div>
             </form>
         </div>
 
@@ -282,5 +430,47 @@ foreach ($promotions as $promo) {
             </div>
         <?php endforeach; ?>
     </main>
+
+    <script>
+        let tacheIndex = 1;
+
+        document.getElementById('add-tache-btn').addEventListener('click', function() {
+            const container = document.getElementById('taches-container');
+            const newTache = document.createElement('div');
+            newTache.className = 'tache-group';
+            newTache.setAttribute('data-index', tacheIndex);
+            newTache.innerHTML = `
+                <div class="form-group">
+                    <label>Libellé de la tâche *</label>
+                    <input type="text" name="taches[${tacheIndex}][libelle]" required>
+                </div>
+                <div class="form-group">
+                    <label>Description de la tâche</label>
+                    <textarea name="taches[${tacheIndex}][description]"></textarea>
+                </div>
+                <div class="form-row">
+                    <div class="form-group half">
+                        <label>Priorité</label>
+                        <select name="taches[${tacheIndex}][priorite]">
+                            <option value="basse">Basse</option>
+                            <option value="moyenne">Moyenne</option>
+                            <option value="haute">Haute</option>
+                        </select>
+                    </div>
+                    <div class="form-group half">
+                        <label>Ordre</label>
+                        <input type="number" name="taches[${tacheIndex}][ordre]" value="${tacheIndex + 1}" min="1">
+                    </div>
+                </div>
+                <button type="button" class="btn-remove" onclick="removeTache(this)">Supprimer</button>
+            `;
+            container.appendChild(newTache);
+            tacheIndex++;
+        });
+
+        function removeTache(button) {
+            button.parentElement.remove();
+        }
+    </script>
 </body>
 </html>

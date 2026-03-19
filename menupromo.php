@@ -53,7 +53,7 @@ $promotions = $pdo->query('SELECT id_promotion, nom FROM promotion ORDER BY nom'
             <button class="nav-btn" onclick="window.location.href='index.php'">Accueil</button>
             <button class="nav-btn" onclick="window.location.href='menupromo.php'">Promotions</button>
             <button class="nav-btn" onclick="window.location.href='alleleves.php'">Eleves</button>
-            <button class="nav-btn" onclick="window.location.href='travauxpratique.php'">Travaux Pratiques</button>
+            <button class="nav-btn" onclick="window.location.href='tp_promo.php'">Travaux Pratiques</button>
             <button class="nav-btn" onclick="window.location.href='parametre.php'">Paramètres</button>
         </nav>
 
