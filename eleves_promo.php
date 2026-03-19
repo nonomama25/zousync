@@ -14,33 +14,37 @@ try {
     die('Erreur DB: ' . htmlspecialchars($e->getMessage()));
 }
 
-// Récupérer tous les élèves (depuis la table utilisateur)
-$stmt = $pdo->prepare('
-    SELECT u.id, u.nom, u.prenom, p.nom as promo_nom 
-    FROM utilisateur u 
-    LEFT JOIN promotion p ON u.id_promotion = p.id_promotion 
-    WHERE u.est_admin = 0 
-    ORDER BY u.nom
-');
-$stmt->execute();
-$eleves = $stmt->fetchAll();
+// Récupérer l'id de la promotion
+$id_promotion = isset($_GET['id_promotion']) ? (int)$_GET['id_promotion'] : 0;
 
+if ($id_promotion <= 0) {
+    die('Promotion invalide. <a href="menupromo.php">Retour</a>');
+}
+
+// Récupérer le nom de la promotion
+$stmt = $pdo->prepare('SELECT nom FROM promotion WHERE id_promotion = ?');
+$stmt->execute([$id_promotion]);
+$promo = $stmt->fetchColumn();
+
+$stmt = $pdo->prepare('SELECT * FROM utilisateur WHERE id_promotion = ?');
+$stmt->execute([$id_promotion]);
+$eleves = $stmt->fetchAll();
 ?>
 <!DOCTYPE html>
 <html lang="fr">
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Tous les élèves</title>
-    <link rel="stylesheet" href="eleve.css">
-    <link rel="stylesheet" href="eleve.css">
+    <title>Élèves - <?= htmlspecialchars($promo) ?></title>
+    <link rel="stylesheet" href="style.css">
+    <link rel="stylesheet" href="menupromo.css">
 </head>
 <body>
     <div class="topbar">
-        <div class="title">Tous les élèves</div>
+        <div class="title">Élèves — <?= htmlspecialchars($promo) ?></div>
         <div class="topbar-right">
             <span class="user-name">John Doe</span>
-            <img src="image/user-avatar.png" alt="Avatar" class="topbar-avatar">
+            <img src="image/user-avatar.png" alt="Avatar" class="user-avatar">
         </div>
     </div>
 
@@ -57,30 +61,20 @@ $eleves = $stmt->fetchAll();
     </nav>
 
     <main class="content">
-        <h1>Tous les élèves</h1>
+        <h1>Élèves de <?= htmlspecialchars($promo) ?></h1>
         <section>
             <div class="cards-grid">
                 <?php if (empty($eleves)): ?>
-                    <p>Aucun élève trouvé.</p>
+                    <p>Aucun élève dans cette promotion.</p>
                 <?php else: ?>
                     <?php foreach ($eleves as $e): ?>
-                        <div class="card">
-                            <div class="card-info">
-                                <strong><?= htmlspecialchars($e['nom'] . ' ' . $e['prenom']) ?></strong>
-                                <br>
-                                <small style="color: #666;"><?= htmlspecialchars($e['promo_nom'] ?? 'Sans promotion') ?></small>
-                            </div>
-                            <div class="card-actions">
-                                <a href="modifeleve.php?id=<?= $e['id'] ?>" class="btn-edit">Modifier</a>
-                                <a href="deleteeleve.php?id=<?= $e['id'] ?>" class="btn-delete" onclick="return confirm('Êtes-vous sûr de vouloir supprimer cet élève ?');">Supprimer</a>
-                            </div>
-                        </div>
+                        <div class="card"><?= htmlspecialchars($e['nom']) ?></div>
                     <?php endforeach; ?>
                 <?php endif; ?>
             </div>
         </section>
     </main>
 
-    <button class="create-btn" title="Ajouter un élève" onclick="window.location.href='addeleves.php'">+</button>
+    <button class="create-btn" title="Ajouter un élève" onclick="window.location.href='addeleves.php?id_promotion=<?= $id_promotion ?>'">+</button>
 </body>
 </html>

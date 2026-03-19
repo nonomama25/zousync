@@ -118,7 +118,52 @@ body {
     background: #fff;
     padding: 16px;
     border-radius: 8px;
-    box-shadow: 0 2px 8px rgba(0, 0, 0, .04)
+    box-shadow: 0 2px 8px rgba(0, 0, 0, .04);
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+}
+
+.card-info {
+    display: flex;
+    flex-direction: column;
+}
+
+.card-actions {
+    display: flex;
+    gap: 8px;
+}
+
+.btn-edit {
+    background-color: #074383;
+    color: white;
+    padding: 6px 12px;
+    border-radius: 4px;
+    text-decoration: none;
+    font-size: 13px;
+    font-weight: bold;
+    border: none;
+    cursor: pointer;
+}
+
+.btn-edit:hover {
+    background-color: #0f4e91;
+}
+
+.btn-delete {
+    background-color: #fc8b01;
+    color: white;
+    padding: 6px 12px;
+    border-radius: 4px;
+    text-decoration: none;
+    font-size: 13px;
+    font-weight: bold;
+    border: none;
+    cursor: pointer;
+}
+
+.btn-delete:hover {
+    background-color: #fc8b01;
 }
 
 .create-btn {

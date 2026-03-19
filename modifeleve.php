@@ -15,13 +15,25 @@ try {
 }
 
 $errors = [];
-$id_promotion = isset($_GET['id_promotion']) ? (int)$_GET['id_promotion'] : null;
+$id = isset($_GET['id']) ? (int)$_GET['id'] : null;
+
+if (!$id) {
+    header('Location: alleleves.php');
+    exit;
+}
+
+// Récupérer l'élève
+$stmt = $pdo->prepare('SELECT * FROM utilisateur WHERE id = ? AND est_admin = 0');
+$stmt->execute([$id]);
+$eleve = $stmt->fetch();
+
+if (!$eleve) {
+    die('Élève introuvable.');
+}
 
 if ($_SERVER['REQUEST_METHOD'] === 'POST') {
     $nom = trim($_POST['nom'] ?? '');
     $prenom = trim($_POST['prenom'] ?? '');
-    $email = trim($_POST['email'] ?? '');
-    $mot_de_passe = $_POST['mot_de_passe'] ?? '';
     $id_promotion_form = isset($_POST['promotion']) && $_POST['promotion'] !== '' ? (int)$_POST['promotion'] : null;
     
     if ($nom === '') {
@@ -30,44 +42,23 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
     if ($prenom === '') {
         $errors[] = 'Le prénom est requis.';
     }
-    if ($email === '' || !filter_var($email, FILTER_VALIDATE_EMAIL)) {
-        $errors[] = 'Email invalide.';
-    }
-    if ($mot_de_passe === '' || strlen($mot_de_passe) < 6) {
-        $errors[] = 'Le mot de passe doit faire au moins 6 caractères.';
-    }
     
     if (empty($errors)) {
         try {
-            // Vérifier si l'email existe déjà
-            $stmt = $pdo->prepare('SELECT COUNT(*) FROM utilisateur WHERE email = ?');
-            $stmt->execute([$email]);
-            if ($stmt->fetchColumn() > 0) {
-                $errors[] = 'Cet email est déjà utilisé.';
-            } else {
-                // Crypter le mot de passe
-                $hash = password_hash($mot_de_passe, PASSWORD_DEFAULT);
-                
-                // Démarrer une transaction
-                $pdo->beginTransaction();
-                
-                // Insérer l'utilisateur
-                $stmt = $pdo->prepare('INSERT INTO utilisateur (nom, prenom, email, mot_de_passe, id_promotion) VALUES (?, ?, ?, ?, ?)');
-                $stmt->execute([$nom, $prenom, $email, $hash, $id_promotion_form ?: null]);
-                
-                // Insérer aussi dans la table eleve
-                $stmt = $pdo->prepare('INSERT INTO eleve (Nom, Promotion) VALUES (?, ?)');
-                $stmt->execute([$nom, $id_promotion_form ?: null]);
-                
-                $pdo->commit();
-                
-                header('Location: ' . ($id_promotion_form ? 'eleves_promo.php?id_promotion=' . $id_promotion_form : 'alleleves.php'));
-                exit;
+            $stmt = $pdo->prepare('UPDATE utilisateur SET nom = ?, prenom = ?, id_promotion = ? WHERE id = ?');
+            $stmt->execute([$nom, $prenom, $id_promotion_form, $id]);
+            
+            // Tenter de modifier aussi la table redondante "eleve" par nom si elle existe
+            try {
+                $stmtEleve = $pdo->prepare('UPDATE eleve SET Nom = ?, Promotion = ? WHERE Nom = ?');
+                $stmtEleve->execute([$nom, $id_promotion_form, $eleve['nom']]);
+            } catch(Exception $e) {
+                // Ignore fallback failure
             }
+            
+            header('Location: alleleves.php');
+            exit;
         } catch (PDOException $e) {
-            if ($pdo->inTransaction()) {
-                $pdo->rollBack();
-            }
             $errors[] = 'Erreur: ' . htmlspecialchars($e->getMessage());
         }
     }
@@ -81,8 +72,7 @@ $promotions = $pdo->query('SELECT id_promotion, nom FROM promotion ORDER BY nom'
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Ajouter un élève</title>
-    <link rel="stylesheet" href="eleve.css">
+    <title>Modifier un élève</title>
     <link rel="stylesheet" href="eleve.css">
     <style>
         .form-container {
@@ -111,8 +101,8 @@ $promotions = $pdo->query('SELECT id_promotion, nom FROM promotion ORDER BY nom'
         }
         input:focus, select:focus {
             outline: none;
-            border-color: #28a745;
-            box-shadow: 0 0 4px rgba(40, 167, 69, 0.3);
+            border-color: #007bff;
+            box-shadow: 0 0 4px rgba(0, 123, 255, 0.3);
         }
         .btn-group {
             display: flex;
@@ -128,18 +118,18 @@ $promotions = $pdo->query('SELECT id_promotion, nom FROM promotion ORDER BY nom'
             transition: background-color 0.3s;
         }
         .btn-submit {
-            background-color: #fc8b01;
-            color: white;
-        }
-        .btn-submit:hover {
-            background-color: #fc8b01;
-        }
-        .btn-cancel {
             background-color: #074383;
             color: white;
         }
-        .btn-cancel:hover {
+        .btn-submit:hover {
             background-color: #0f4e91;
+        }
+        .btn-cancel {
+            background-color: #fc8b01;
+            color: white;
+        }
+        .btn-cancel:hover {
+            background-color: #fc8b01;
         }
         .error {
             color: #dc3545;
@@ -153,10 +143,10 @@ $promotions = $pdo->query('SELECT id_promotion, nom FROM promotion ORDER BY nom'
 </head>
 <body>
     <div class="topbar">
-        <div class="title">Ajouter un élève</div>
+        <div class="title">Modifier un élève</div>
         <div class="topbar-right">
             <span class="user-name">John Doe</span>
-            <img src="image/user-avatar.png" alt="Avatar" class="user-avatar">
+            <img src="image/user-avatar.png" alt="Avatar" class="topbar-avatar">
         </div>
     </div>
 
@@ -174,7 +164,7 @@ $promotions = $pdo->query('SELECT id_promotion, nom FROM promotion ORDER BY nom'
 
     <main class="content">
         <div class="form-container">
-            <h1>Ajouter un nouvel élève</h1>
+            <h1>Modifier les infos de l'élève</h1>
             
             <?php if (!empty($errors)): ?>
                 <div class="error">
@@ -186,34 +176,26 @@ $promotions = $pdo->query('SELECT id_promotion, nom FROM promotion ORDER BY nom'
                 </div>
             <?php endif; ?>
             
-            <form method="post" action="addeleves.php">
+            <form method="post" action="modifeleve.php?id=<?= $id ?>">
                 <div class="form-group">
                     <label for="nom">Nom *</label>
-                    <input type="text" id="nom" name="nom" value="<?= htmlspecialchars($_POST['nom'] ?? '') ?>" required>
+                    <input type="text" id="nom" name="nom" value="<?= htmlspecialchars($_POST['nom'] ?? $eleve['nom']) ?>" required>
                 </div>
                 
                 <div class="form-group">
                     <label for="prenom">Prénom *</label>
-                    <input type="text" id="prenom" name="prenom" value="<?= htmlspecialchars($_POST['prenom'] ?? '') ?>" required>
-                </div>
-                
-                <div class="form-group">
-                    <label for="email">Email *</label>
-                    <input type="email" id="email" name="email" value="<?= htmlspecialchars($_POST['email'] ?? '') ?>" required>
-                </div>
-                
-                <div class="form-group">
-                    <label for="mot_de_passe">Mot de passe (min 6 caractères) *</label>
-                    <input type="password" id="mot_de_passe" name="mot_de_passe" required>
+                    <input type="text" id="prenom" name="prenom" value="<?= htmlspecialchars($_POST['prenom'] ?? $eleve['prenom']) ?>" required>
                 </div>
                 
                 <div class="form-group">
                     <label for="promotion">Promotion</label>
                     <select id="promotion" name="promotion">
                         <option value="">-- Aucune --</option>
-                        <?php foreach ($promotions as $p): ?>
-                            <option value="<?= $p['id_promotion'] ?>" 
-                                <?= ($id_promotion && $id_promotion == $p['id_promotion']) || (isset($_POST['promotion']) && $_POST['promotion'] == $p['id_promotion']) ? 'selected' : '' ?>>
+                        <?php 
+                        $current_promo = isset($_POST['promotion']) ? $_POST['promotion'] : $eleve['id_promotion'];
+                        foreach ($promotions as $p): 
+                        ?>
+                            <option value="<?= $p['id_promotion'] ?>" <?= $current_promo == $p['id_promotion'] ? 'selected' : '' ?>>
                                 <?= htmlspecialchars($p['nom']) ?>
                             </option>
                         <?php endforeach; ?>
@@ -221,7 +203,7 @@ $promotions = $pdo->query('SELECT id_promotion, nom FROM promotion ORDER BY nom'
                 </div>
                 
                 <div class="btn-group">
-                    <button type="submit" class="btn-submit">Ajouter</button>
+                    <button type="submit" class="btn-submit">Sauvegarder</button>
                     <button type="button" class="btn-cancel" onclick="window.location.href='alleleves.php'">Annuler</button>
                 </div>
             </form>
