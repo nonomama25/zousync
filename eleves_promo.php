@@ -14,6 +14,13 @@ try {
     die('Erreur DB: ' . htmlspecialchars($e->getMessage()));
 }
 
+// Vérifier si l'utilisateur est admin
+session_start();
+if (!isset($_SESSION['user_id']) || !isset($_SESSION['est_admin']) || $_SESSION['est_admin'] != 1) {
+    header('Location: login.php');
+    exit;
+}
+
 // Récupérer l'id de la promotion
 $id_promotion = isset($_GET['id_promotion']) ? (int)$_GET['id_promotion'] : 0;
 
@@ -43,7 +50,7 @@ $eleves = $stmt->fetchAll();
     <div class="topbar">
         <div class="title">Élèves — <?= htmlspecialchars($promo) ?></div>
         <div class="topbar-right">
-            <span class="user-name">John Doe</span>
+            <span class="user-name"><?php echo htmlspecialchars($_SESSION['nom'] ?? 'Admin'); ?></span>
             <img src="image/user-avatar.png" alt="Avatar" class="user-avatar">
         </div>
     </div>

@@ -1,6 +1,5 @@
 <?php
 // Connexion à la base de données
-// Connexion à la base de données
 $DB_HOST = '127.0.0.1';
 $DB_NAME = 'tp';
 $DB_USER = 'root';
@@ -15,8 +14,14 @@ try {
     die('Erreur DB: ' . htmlspecialchars($e->getMessage()));
 }
 
+// Vérifier si l'utilisateur est admin
+session_start();
+if (!isset($_SESSION['user_id']) || !isset($_SESSION['est_admin']) || $_SESSION['est_admin'] != 1) {
+    header('Location: login.php');
+    exit;
+}
+
 // Récupérer toutes les promotions
-$promotions = $pdo->query('SELECT id_promotion, nom FROM promotion ORDER BY nom')->fetchAll();
 $promotions = $pdo->query('SELECT id_promotion, nom FROM promotion ORDER BY nom')->fetchAll();
 ?>
 <!DOCTYPE html>
@@ -32,10 +37,7 @@ $promotions = $pdo->query('SELECT id_promotion, nom FROM promotion ORDER BY nom'
         <div class="topbar">
             <div class="title">Dashboard Promotion</div>
             <div class="topbar-right">
-                <span class="user-name">John Doe</span>
-                <img src="image/user-avatar.png" alt="Avatar" class="user-avatar">
-            </div>
-        </div>
+            <span class="user-name"><?php echo htmlspecialchars($_SESSION['nom'] ?? 'Admin'); ?></span>
 
         <div class="logo-container">
          <img src="image/Logo entreprise.png" alt="Logo" class="login-logo">
