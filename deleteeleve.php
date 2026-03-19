@@ -14,6 +14,13 @@ try {
     die('Erreur DB: ' . htmlspecialchars($e->getMessage()));
 }
 
+// Vérifier si l'utilisateur est admin
+session_start();
+if (!isset($_SESSION['user_id']) || !isset($_SESSION['est_admin']) || $_SESSION['est_admin'] != 1) {
+    header('Location: login.php');
+    exit;
+}
+
 $id = isset($_GET['id']) ? (int)$_GET['id'] : null;
 
 if ($id) {

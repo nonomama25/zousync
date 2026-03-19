@@ -14,6 +14,13 @@ try {
     die('Erreur DB: ' . htmlspecialchars($e->getMessage()));
 }
 
+// Vérifier si l'utilisateur est admin
+session_start();
+if (!isset($_SESSION['user_id']) || !isset($_SESSION['est_admin']) || $_SESSION['est_admin'] != 1) {
+    header('Location: login.php');
+    exit;
+}
+
 // Récupérer tous les élèves (depuis la table utilisateur)
 $stmt = $pdo->prepare('
     SELECT u.id, u.nom, u.prenom, p.nom as promo_nom 
@@ -39,7 +46,7 @@ $eleves = $stmt->fetchAll();
     <div class="topbar">
         <div class="title">Tous les élèves</div>
         <div class="topbar-right">
-            <span class="user-name">John Doe</span>
+            <span class="user-name"><?php echo htmlspecialchars($_SESSION['nom'] ?? 'Admin'); ?></span>
             <img src="image/user-avatar.png" alt="Avatar" class="topbar-avatar">
         </div>
     </div>
