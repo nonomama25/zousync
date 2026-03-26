@@ -86,6 +86,7 @@ $eleves = $stmt->fetchAll();
                             </div>
                             <div class="card-actions">
                                 <a href="modifeleve.php?id=<?= $e['id'] ?>" class="btn-edit">Modifier</a>
+                                <a href="progression.php?id_eleve=<?= $e['id'] ?>" class="btn-view">Voir progression</a>
                                 <a href="deleteeleve.php?id=<?= $e['id'] ?>" class="btn-delete" onclick="return confirm('Êtes-vous sûr de vouloir supprimer cet élève ?');">Supprimer</a>
                             </div>
                         </div>

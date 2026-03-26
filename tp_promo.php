@@ -1,5 +1,15 @@
-<?php
+﻿<?php
 session_start();
+
+function get_priorite_text($num) {
+    $map = [1 => 'Basse', 2 => 'Moyenne', 3 => 'Haute'];
+    return $map[$num] ?? 'Moyenne';
+}
+
+function get_priorite_num($text) {
+    $map = ['basse' => 1, 'moyenne' => 2, 'haute' => 3];
+    return $map[strtolower($text)] ?? 2;
+}
 
 // Connexion à la base de données
 $DB_HOST = '127.0.0.1';
@@ -58,7 +68,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['add_tp'])) {
                 foreach ($_POST['taches'] as $tache) {
                     $libelle = trim($tache['libelle'] ?? '');
                     $description_tache = trim($tache['description'] ?? '');
-                    $priorite = $tache['priorite'] ?? 'moyenne';
+                    $priorite = get_priorite_num($tache['priorite'] ?? 'moyenne');
                     $ordre = isset($tache['ordre']) ? (int)$tache['ordre'] : 1;
 
                     if ($libelle !== '') {
@@ -79,7 +89,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['add_tp'])) {
 if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['add_tache'])) {
     $libelle = trim($_POST['libelle'] ?? '');
     $description = trim($_POST['desc_tache'] ?? '');
-    $priorite = trim($_POST['priorite'] ?? '');
+    $priorite = get_priorite_num(trim($_POST['priorite'] ?? ''));
     $ordre = isset($_POST['ordre']) ? (int)$_POST['ordre'] : 0;
     $id_tp = isset($_POST['id_tp']) ? (int)$_POST['id_tp'] : null;
 
@@ -368,9 +378,9 @@ foreach ($promotions as $promo) {
                             <div class="form-group half">
                                 <label>Priorité</label>
                                 <select name="taches[0][priorite]">
-                                    <option value="basse">Basse</option>
-                                    <option value="moyenne">Moyenne</option>
-                                    <option value="haute">Haute</option>
+                                    <option value="1">Basse</option>
+                                    <option value="2">Moyenne</option>
+                                    <option value="3">Haute</option>
                                 </select>
                             </div>
                             <div class="form-group half">
@@ -407,7 +417,7 @@ foreach ($promotions as $promo) {
                             <?php else: ?>
                                 <?php foreach ($tp['taches'] as $tache): ?>
                                     <div class="tache-item">
-                                        <strong><?php echo htmlspecialchars($tache['libelle']); ?></strong> (Priorité: <?php echo htmlspecialchars($tache['priorite']); ?>, Ordre: <?php echo htmlspecialchars($tache['ordre']); ?>)<br>
+                                        <strong><?php echo htmlspecialchars($tache['libelle']); ?></strong> (Priorité: <?php echo htmlspecialchars(get_priorite_text($tache['priorite'])); ?>, Ordre: <?php echo htmlspecialchars($tache['ordre']); ?>)<br>
                                         <?php echo htmlspecialchars($tache['description']); ?>
                                     </div>
                                 <?php endforeach; ?>
@@ -416,9 +426,13 @@ foreach ($promotions as $promo) {
                             <h4>Ajouter une tâche :</h4>
                             <form method="post" action="tp_promo.php" style="margin-top: 10px;">
                                 <input type="hidden" name="id_tp" value="<?php echo $tp['id_tp']; ?>">
-                                <input type="text" name="libelle" placeholder="Libellé *" required style="width: 60%; padding: 5px;">
-                                <input type="text" name="priorite" placeholder="Priorité" style="width: 15%; padding: 5px;">
-                                <input type="number" name="ordre" placeholder="Ordre" style="width: 15%; padding: 5px;">
+                                <input type="text" name="libelle" placeholder="Libellé *" required style="width: 40%; padding: 5px;">
+                                <select name="priorite" style="width: 20%; padding: 5px;">
+                                    <option value="1">Basse</option>
+                                    <option value="2">Moyenne</option>
+                                    <option value="3">Haute</option>
+                                </select>
+                                <input type="number" name="ordre" placeholder="Ordre" style="width: 20%; padding: 5px;">
                                 <br>
                                 <textarea name="desc_tache" placeholder="Description" style="width: 100%; padding: 5px; margin-top: 5px; height: 50px;"></textarea>
                                 <br>
@@ -452,9 +466,9 @@ foreach ($promotions as $promo) {
                     <div class="form-group half">
                         <label>Priorité</label>
                         <select name="taches[${tacheIndex}][priorite]">
-                            <option value="basse">Basse</option>
-                            <option value="moyenne">Moyenne</option>
-                            <option value="haute">Haute</option>
+                            <option value="1">Basse</option>
+                            <option value="2">Moyenne</option>
+                            <option value="3">Haute</option>
                         </select>
                     </div>
                     <div class="form-group half">

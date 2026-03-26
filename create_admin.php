@@ -1,4 +1,4 @@
-<?php
+﻿<?php
 session_start();
 // --- Connexion à la base ---
 try {
@@ -65,10 +65,8 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
         <h2>Créer un compte admin</h2>
     </div>
 
-    <!-- Message PHP -->
     <?= $message ?>
 
-    <!-- Formulaire -->
     <form method="POST" action="">
         <div class="mb-3">
             <label for="nom" class="form-label"><i class="fas fa-user"></i> Nom</label>

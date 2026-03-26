@@ -63,10 +63,8 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
         <h2>Connexion</h2>
     </div>
 
-    <!-- Message PHP -->
     <?= $message ?>
 
-    <!-- Formulaire -->
     <form method="POST" action="">
         <div class="mb-3">
             <label for="identifier" class="form-label"><i class="fas fa-user"></i> Email</label>

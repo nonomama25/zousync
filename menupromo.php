@@ -28,78 +28,105 @@ if ($_SESSION['utilisateur']['est_admin'] != 1) {
     exit;
 }
 
+// Gérer l'ajout d'une nouvelle promotion
+if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['add_promotion'])) {
+    $nom = trim($_POST['nom'] ?? '');
+    if ($nom === '') {
+        $error = 'Le nom de la promotion est requis.';
+    } else {
+        try {
+            $stmt = $pdo->prepare('INSERT INTO promotion (nom) VALUES (?)');
+            $stmt->execute([$nom]);
+            $success = 'Promotion ajoutée avec succès.';
+        } catch (PDOException $e) {
+            $error = 'Erreur: ' . htmlspecialchars($e->getMessage());
+        }
+    }
+}
+
 // Récupérer toutes les promotions
-$promotions = $pdo->query('SELECT id_promotion, nom FROM promotion ORDER BY nom')->fetchAll();
+try {
+    $promotions = $pdo->query('SELECT id_promotion, nom FROM promotion ORDER BY nom')->fetchAll();
+} catch (PDOException $e) {
+    die('Erreur lors de la récupération des promotions: ' . htmlspecialchars($e->getMessage()));
+}
 ?>
 <!DOCTYPE html>
 <html lang="fr">
 <head>
-        <meta charset="UTF-8">
-        <meta name="viewport" content="width=device-width, initial-scale=1.0">
-        <title>Menu Promotion</title>
-        <link rel="stylesheet" href="style.css">
-        <link rel="stylesheet" href="menupromo.css">
-    </head>
-    <body>
-        <div class="topbar">
-            <div class="title">Dashboard Promotion</div>
-            <div class="topbar-right">
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Menu Promotion</title>
+    <link rel="stylesheet" href="style.css">
+    <link rel="stylesheet" href="menupromo.css">
+</head>
+<body>
+    <div class="topbar">
+        <div class="title">Dashboard Promotion</div>
+        <div class="topbar-right">
             <span class="user-name"><?php echo htmlspecialchars($_SESSION['utilisateur']['nom']); ?></span>
-
-        <div class="logo-container">
-         <img src="image/Logo entreprise.png" alt="Logo" class="login-logo">
+            <img src="image/user-avatar.png" alt="topbar-avatar">
         </div>
-        <nav class="sidebar" aria-label="Navigation principale">
-            <button class="nav-btn" onclick="window.location.href='index.php'">Accueil</button>
-            <button class="nav-btn" onclick="window.location.href='menupromo.php'">Promotions</button>
-            <button class="nav-btn" onclick="window.location.href='alleleves.php'">Eleves</button>
-            <button class="nav-btn" onclick="window.location.href='tp_promo.php'">Travaux Pratiques</button>
-            <button class="nav-btn" onclick="window.location.href='parametre.php'">Paramètres</button>
-        </nav>
+    </div>
 
-        <main class="content">
-            
-            <h1>Promotions</h1>
-            <section>
-                <div class="cards-grid">
-                    <?php if (empty($promotions)): ?>
-                        <p>Aucune promotion trouvée.</p>
-                    <?php else: ?>
-                        <?php foreach ($promotions as $p): ?>
-                            <a class="card" href="eleves_promo.php?id_promotion=<?= htmlspecialchars($p['id_promotion']) ?>"><?= htmlspecialchars($p['nom']) ?></a>
-                        <?php endforeach; ?>
-                    <?php endif; ?>
+    <div class="logo-container">
+        <img src="image/Logo entreprise.png" alt="Logo" class="login-logo">
+    </div>
+
+    <nav class="sidebar" aria-label="Navigation principale">
+        <button class="nav-btn" onclick="window.location.href='index.php'">Accueil</button>
+        <button class="nav-btn" onclick="window.location.href='menupromo.php'">Promotions</button>
+        <button class="nav-btn" onclick="window.location.href='alleleves.php'">Eleves</button>
+        <button class="nav-btn" onclick="window.location.href='tp_promo.php'">Travaux Pratiques</button>
+        <button class="nav-btn" onclick="window.location.href='parametre.php'">Paramètres</button>
+    </nav>
+
+    <main class="content">
+        <h1>Promotions</h1>
+
+        <section class="section-add">
+            <h2>Nouvelle promotion</h2>
+            <form method="post" class="add-promo-form">
+                <div class="input-group">
+                    <label for="nom" class="form-label">Nom de la promotion</label>
+                    <div class="input-wrapper">
+                        <input type="text" id="nom" name="nom" required class="form-input" placeholder="Entrez le nom de la promotion">
+                        <button type="submit" name="add_promotion" class="btn-add-promo">
+                            <span class="btn-text">Ajouter</span>
+                            <span class="btn-icon">+</span>
+                        </button>
+                    </div>
                 </div>
-            </section>
-            
-        </main>
-        <!--<table class = "table">
-        <thead>
-            <tr>
-                <th>Promotions</th>
-            </tr>
-        </thead>
-        <tbody>
-            <?php 
-            //foreach ($promotions as $ligne){
-            ?>
-            <tr>
-                <td><?php
-                 //echo ($ligne["nom"]);
+            </form>
 
-                ?> </td>
-                
-                <td><?php //echo ($ligne["nom"]); ?></td>
-                <td><?php //echo ($ligne["nombre_eleves"]); ?></td>
-                <td><button type="button" class="btn btn-danger btn-delete" data-id="<?php //echo $ligne["id"]; ?>" data-title="<?php //echo htmlspecialchars($ligne['nom'], ENT_QUOTES); ?>">Supprimer</button></td>
-                <td><a href="change.php?id=<?php //echo $ligne["id"]; ?>"><button type="button" class="btn btn-warning">Modifier</button></a></td>
-            </tr>
-            <?php 
-            //}
-            ?>
-        </tbody>
-    </table> -->
+            <?php if (isset($error)): ?>
+                <div class="message error-message">
+                    <span class="message-icon">⚠️</span>
+                    <span class="message-text"><?php echo $error; ?></span>
+                </div>
+            <?php endif; ?>
+            <?php if (isset($success)): ?>
+                <div class="message success-message">
+                    <span class="message-icon">✅</span>
+                    <span class="message-text"><?php echo $success; ?></span>
+                </div>
+            <?php endif; ?>
+        </section>
 
-        <button class="create-btn" title="Créer" onclick="window.location.href='addpromo.php'">+</button>
-    </body>
+        <section class="section-list">
+            <h2>Liste des promotions</h2>
+            <div class="cards-grid">
+                <?php if (empty($promotions)): ?>
+                    <p>Aucune promotion trouvée. Ajoutez-en une ci-dessus.</p>
+                <?php else: ?>
+                    <?php foreach ($promotions as $p): ?>
+                        <a class="card" href="eleves_promo.php?id_promotion=<?= htmlspecialchars($p['id_promotion']) ?>">
+                            <?= htmlspecialchars($p['nom']) ?>
+                        </a>
+                    <?php endforeach; ?>
+                <?php endif; ?>
+            </div>
+        </section>
+    </main>
+</body>
 </html>

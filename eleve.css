@@ -166,6 +166,22 @@ body {
     background-color: #fc8b01;
 }
 
+.btn-view {
+    background-color: #28a745;
+    color: white;
+    padding: 6px 12px;
+    border-radius: 4px;
+    text-decoration: none;
+    font-size: 13px;
+    font-weight: bold;
+    border: none;
+    cursor: pointer;
+}
+
+.btn-view:hover {
+    background-color: #218838;
+}
+
 .create-btn {
     position: fixed;
     right: 24px;
