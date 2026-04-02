@@ -48,37 +48,31 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
     if (empty($email) || !filter_var($email, FILTER_VALIDATE_EMAIL)) {
         $errors[] = 'Email invalide.';
     }
-    if (empty($mot_de_passe) || strlen($mot_de_passe) < 6) {
-        $errors[] = 'Le mot de passe doit faire au moins 6 caractères.';
+    if (empty($mot_de_passe)) {
+    $errors[] = 'Le mot de passe temporaire est requis.';
+}
     }
 
     if (empty($errors)) {
         try {
-            // Vérifier si l'email existe déjà
             $stmt = $pdo->prepare('SELECT COUNT(*) FROM utilisateur WHERE email = ?');
             $stmt->execute([$email]);
             if ($stmt->fetchColumn() > 0) {
                 $errors[] = 'Cet email est déjà utilisé.';
             } else {
-                // Crypter le mot de passe
                 $hash = password_hash($mot_de_passe, PASSWORD_DEFAULT);
 
-                // Insérer l'utilisateur (élève, donc est_admin = 0)
-                $stmt = $pdo->prepare('INSERT INTO utilisateur (nom, prenom, email, mot_de_passe, id_promotion, est_admin) VALUES (?, ?, ?, ?, ?, 0)');
+                $stmt = $pdo->prepare('INSERT INTO utilisateur (nom, prenom, email, mot_de_passe, id_promotion, est_admin, first_login) VALUES (?, ?, ?, ?, ?, 0, 1)');
                 $stmt->execute([$nom, $prenom, $email, $hash, $id_promotion]);
 
+
                 $success = 'Élève ajouté avec succès.';
-                // Optionnel : rediriger
-                // header('Location: alleleves.php');
-                // exit;
             }
         } catch (PDOException $e) {
             $errors[] = 'Erreur lors de l\'ajout : ' . htmlspecialchars($e->getMessage());
         }
     }
 }
-
-// Récupérer toutes les promotions pour le select
 $promotions = $pdo->query('SELECT id_promotion, nom FROM promotion ORDER BY nom')->fetchAll();
 ?>
 
