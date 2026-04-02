@@ -150,11 +150,11 @@ foreach ($tps as $tp) {
     </div>
 
     <nav class="sidebar" aria-label="Navigation principale">
-        <button class="nav-btn" onclick="window.location.href='index.php'">Accueil</button>
-        <button class="nav-btn" onclick="window.location.href='menupromo.php'">Promotions</button>
-        <button class="nav-btn" onclick="window.location.href='alleleves.php'">Eleves</button>
-        <button class="nav-btn" onclick="window.location.href='tp_promo.php'">Travaux Pratiques</button>
-        <button class="nav-btn" onclick="window.location.href='parametre.php'">Paramètres</button>
+        <a href="index.php" class="nav-btn">Accueil</a>
+        <a href="menupromo.php" class="nav-btn">Promotions</a>
+        <a href="alleleves.php" class="nav-btn">Eleves</a>
+        <a href="tp_promo.php" class="nav-btn">Travaux Pratiques</a>
+        <a href="parametre.php" class="nav-btn">Paramètres</a>
     </nav>
 
     <main class="content">

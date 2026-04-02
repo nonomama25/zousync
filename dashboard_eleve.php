@@ -163,8 +163,8 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['update_completed'])) 
     </div>
 
     <nav class="sidebar" aria-label="Navigation principale">
-        <button class="nav-btn" onclick="window.location.href='index.php'">Accueil</button>
-        <button class="nav-btn" onclick="window.location.href='tp_promo.php'">Travaux Pratiques</button>
+        <a href="index.php" class="nav-btn">Accueil</a>
+        <a href="tp_promo.php" class="nav-btn">Travaux Pratiques</a>
     </nav>
 
     <main class="content">

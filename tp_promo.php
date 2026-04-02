@@ -318,11 +318,11 @@ foreach ($promotions as $promo) {
     </div>
 
     <nav class="sidebar" aria-label="Navigation principale">
-        <button class="nav-btn" onclick="window.location.href='index.php'">Accueil</button>
-        <button class="nav-btn" onclick="window.location.href='menupromo.php'">Promotions</button>
-        <button class="nav-btn" onclick="window.location.href='alleleves.php'">Eleves</button>
-        <button class="nav-btn" onclick="window.location.href='tp_promo.php'">Travaux Pratiques</button>
-        <button class="nav-btn" onclick="window.location.href='parametre.php'">Paramètres</button>
+        <a href="index.php" class="nav-btn">Accueil</a>
+        <a href="menupromo.php" class="nav-btn">Promotions</a>
+        <a href="alleleves.php" class="nav-btn">Eleves</a>
+        <a href="tp_promo.php" class="nav-btn">Travaux Pratiques</a>
+        <a href="parametre.php" class="nav-btn">Paramètres</a>
     </nav>
 
     <main class="content">
@@ -388,10 +388,8 @@ foreach ($promotions as $promo) {
                                 <input type="number" name="taches[0][ordre]" value="1" min="1">
                             </div>
                         </div>
-                        <button type="button" class="btn-remove" onclick="removeTache(this)">Supprimer</button>
                     </div>
                 </div>
-                <button type="button" id="add-tache-btn" class="btn-add-tache">Ajouter une tâche</button>
 
                 <div class="form-actions">
                     <button type="submit" name="add_tp" class="btn-submit">Ajouter TP</button>
@@ -445,46 +443,6 @@ foreach ($promotions as $promo) {
         <?php endforeach; ?>
     </main>
 
-    <script>
-        let tacheIndex = 1;
 
-        document.getElementById('add-tache-btn').addEventListener('click', function() {
-            const container = document.getElementById('taches-container');
-            const newTache = document.createElement('div');
-            newTache.className = 'tache-group';
-            newTache.setAttribute('data-index', tacheIndex);
-            newTache.innerHTML = `
-                <div class="form-group">
-                    <label>Libellé de la tâche *</label>
-                    <input type="text" name="taches[${tacheIndex}][libelle]" required>
-                </div>
-                <div class="form-group">
-                    <label>Description de la tâche</label>
-                    <textarea name="taches[${tacheIndex}][description]"></textarea>
-                </div>
-                <div class="form-row">
-                    <div class="form-group half">
-                        <label>Priorité</label>
-                        <select name="taches[${tacheIndex}][priorite]">
-                            <option value="1">Basse</option>
-                            <option value="2">Moyenne</option>
-                            <option value="3">Haute</option>
-                        </select>
-                    </div>
-                    <div class="form-group half">
-                        <label>Ordre</label>
-                        <input type="number" name="taches[${tacheIndex}][ordre]" value="${tacheIndex + 1}" min="1">
-                    </div>
-                </div>
-                <button type="button" class="btn-remove" onclick="removeTache(this)">Supprimer</button>
-            `;
-            container.appendChild(newTache);
-            tacheIndex++;
-        });
-
-        function removeTache(button) {
-            button.parentElement.remove();
-        }
-    </script>
 </body>
 </html>

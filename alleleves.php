@@ -63,11 +63,11 @@ $eleves = $stmt->fetchAll();
     </div>
 
     <nav class="sidebar" aria-label="Navigation principale">
-        <button class="nav-btn" onclick="window.location.href='index.php'">Accueil</button>
-        <button class="nav-btn" onclick="window.location.href='menupromo.php'">Promotions</button>
-        <button class="nav-btn" onclick="window.location.href='alleleves.php'">Eleves</button>
-        <button class="nav-btn" onclick="window.location.href='tp_promo.php'">Travaux Pratiques</button>
-        <button class="nav-btn" onclick="window.location.href='parametre.php'">Paramètres</button>
+        <a href="index.php" class="nav-btn">Accueil</a>
+        <a href="menupromo.php" class="nav-btn">Promotions</a>
+        <a href="alleleves.php" class="nav-btn">Eleves</a>
+        <a href="tp_promo.php" class="nav-btn">Travaux Pratiques</a>
+        <a href="parametre.php" class="nav-btn">Paramètres</a>
     </nav>
 
     <main class="content">
@@ -87,7 +87,10 @@ $eleves = $stmt->fetchAll();
                             <div class="card-actions">
                                 <a href="modifeleve.php?id=<?= $e['id'] ?>" class="btn-edit">Modifier</a>
                                 <a href="progression.php?id_eleve=<?= $e['id'] ?>" class="btn-view">Voir progression</a>
-                                <a href="deleteeleve.php?id=<?= $e['id'] ?>" class="btn-delete" onclick="return confirm('Êtes-vous sûr de vouloir supprimer cet élève ?');">Supprimer</a>
+                                <form method="post" action="deleteeleve.php" style="display:inline;">
+                                    <input type="hidden" name="id" value="<?= $e['id'] ?>">
+                                    <button type="submit" class="btn-delete" style="border:none; cursor:pointer; background:none; padding:0;">Supprimer</button>
+                                </form>
                             </div>
                         </div>
                     <?php endforeach; ?>
@@ -96,6 +99,6 @@ $eleves = $stmt->fetchAll();
         </section>
     </main>
 
-    <button class="create-btn" title="Ajouter un élève" onclick="window.location.href='addeleves.php'">+</button>
+    <a href="addeleves.php" class="create-btn" title="Ajouter un élève">+</a>
 </body>
 </html>
