@@ -66,13 +66,12 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
                 $stmt->execute([$nom, $prenom, $email, $hash, $id_promotion]);
 
 
-                $success = 'Élève ajouté avec succès.';
+                $success = 'Élève ajouté avec succès. Un mot de passe temporaire lui a été attribué.';
             }
         } catch (PDOException $e) {
             $errors[] = 'Erreur lors de l\'ajout : ' . htmlspecialchars($e->getMessage());
         }
     }
-}
 $promotions = $pdo->query('SELECT id_promotion, nom FROM promotion ORDER BY nom')->fetchAll();
 ?>
 

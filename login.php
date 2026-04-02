@@ -1,11 +1,12 @@
 <?php
 session_start();
+
 // --- Connexion à la base ---
 try {
     $route = new PDO(
         'mysql:host=localhost;dbname=tp;charset=utf8',
-        'root',   // utilisateur MySQL (Laragon par défaut : 'root')
-        ''        // mot de passe MySQL (Laragon par défaut : vide)
+        'root',
+        ''
     );
     $route->setAttribute(PDO::ATTR_ERRMODE, PDO::ERRMODE_EXCEPTION);
 } catch (PDOException $e) {
@@ -17,32 +18,40 @@ $message = "";
 
 if ($_SERVER['REQUEST_METHOD'] === 'POST') {
 
-    $prenom = $_POST['identifier'];
+    $email = $_POST['identifier'];
     $mdp = $_POST['password'];
 
+    // Récupération de l'utilisateur
     $sql = "SELECT * FROM utilisateur WHERE email = :email";
     $stmt = $route->prepare($sql);
-    $stmt->execute([
-        ':email' => $prenom
-    ]);
+    $stmt->execute([':email' => $email]);
 
     $user = $stmt->fetch();
 
-    // password_verify compare le mot de passe en clair avec celui crypté dans la base
+    // Vérification du mot de passe
     if ($user && password_verify($mdp, $user['mot_de_passe'])) {
-        $_SESSION['utilisateur'] = $user; // Sauvegarde de la session de l'utilisateur
-        
+
+        // Stockage en session
+        $_SESSION['utilisateur'] = $user;
+
+   
+        if ($user['first_login'] == 1) {
+            header("Location: change_password.php");
+            exit;
+        }
+
+       
         if ($user["est_admin"] == 1) {
             header("Location: menupromo.php");
         } else {
             header("Location: dashboard_eleve.php");
         }
         exit;
+
     } else {
         $message = "<div class='alert alert-danger text-center'>Email ou mot de passe incorrect</div>";
     }
 }
-
 ?>
 
 <!DOCTYPE html>
@@ -77,14 +86,12 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
         </div>
 
         <button type="submit" class="btn btn-primary w-100 btn-custom">Se connecter</button>
-
     </form>
 
     <div class="mt-3 text-center">
         <a href="create_admin.php" class="btn btn-secondary">Créer un compte admin</a>
     </div>
 </div>
-
 
 </body>
 </html>
