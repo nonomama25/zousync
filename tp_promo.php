@@ -138,21 +138,26 @@ foreach ($promotions as $promo) {
     <title>Gestion TP par Promotion</title>
     <link rel="stylesheet" href="eleve.css">
     <style>
+        .content h1,
+        .content h2 {
+            color: #074383;
+        }
         .form-container {
-            max-width: 800px;
-            background: linear-gradient(135deg, #f5f7fa 0%, #c3cfe2 100%);
+            max-width: 840px;
+            background: linear-gradient(135deg, #fdfbfb 0%, #f5f7fa 100%);
             padding: 40px;
-            border-radius: 15px;
-            box-shadow: 0 10px 30px rgba(0,0,0,0.2);
-            margin-bottom: 40px;
-            border: 1px solid #e0e0e0;
+            border-radius: 18px;
+            box-shadow: 0 24px 60px rgba(0,0,0,0.08);
+            margin-bottom: 45px;
+            border: 1px solid rgba(0,0,0,0.08);
         }
         .form-container h2 {
             text-align: center;
-            color: #333;
+            color: #222;
             margin-bottom: 30px;
-            font-size: 28px;
-            font-weight: bold;
+            font-size: 30px;
+            font-weight: 800;
+            letter-spacing: 0.02em;
         }
         .form-group {
             margin-bottom: 20px;
@@ -160,147 +165,157 @@ foreach ($promotions as $promo) {
         .form-group label {
             display: block;
             margin-bottom: 8px;
-            font-weight: 600;
-            color: #555;
-            font-size: 16px;
+            font-weight: 700;
+            color: #3a3a3a;
+            font-size: 15px;
         }
-        .form-group input, .form-group select, .form-group textarea {
+        .form-group input,
+        .form-group select,
+        .form-group textarea {
             width: 100%;
-            padding: 12px;
-            border: 2px solid #ddd;
-            border-radius: 8px;
-            font-size: 16px;
-            transition: border-color 0.3s;
+            padding: 14px 16px;
+            border: 1px solid #d8d8d8;
+            border-radius: 12px;
+            font-size: 15px;
+            background: #fff;
+            transition: border-color 0.3s, box-shadow 0.3s;
         }
-        .form-group input:focus, .form-group select:focus, .form-group textarea:focus {
+        .form-group input:focus,
+        .form-group select:focus,
+        .form-group textarea:focus {
             outline: none;
-            border-color: #007bff;
-            box-shadow: 0 0 8px rgba(0, 123, 255, 0.3);
+            border-color: #4b81ff;
+            box-shadow: 0 0 18px rgba(75,129,255,0.18);
         }
         .form-group textarea {
-            height: 80px;
+            height: 95px;
             resize: vertical;
         }
         .form-row {
             display: flex;
-            gap: 15px;
+            flex-wrap: wrap;
+            gap: 16px;
         }
         .half {
             flex: 1;
+            min-width: 175px;
         }
         .tache-group {
-            background: #f8f9fa;
-            padding: 20px;
-            border-radius: 8px;
-            margin-bottom: 15px;
-            border-left: 4px solid #fc8b01;
+            background: #ffffff;
+            padding: 22px;
+            border-radius: 14px;
+            margin-bottom: 18px;
+            border: 1px solid #e2e8f0;
             position: relative;
         }
-        .btn-add-tache {
-            background: #28a745;
-            color: white;
+        .btn-add-task,
+        .btn-action,
+        .btn-progress,
+        .btn-remove,
+        .btn-submit,
+        .btn-add {
             border: none;
-            padding: 10px 20px;
-            border-radius: 6px;
+            border-radius: 12px;
             cursor: pointer;
-            font-size: 16px;
-            margin: 20px 0;
-            transition: background 0.3s;
+            font-weight: 700;
+            transition: transform 0.18s ease, background 0.18s ease, box-shadow 0.18s ease;
         }
-        .btn-add-tache:hover {
-            background: #218838;
+        .btn-add-task,
+        .btn-action,
+        .btn-progress,
+        .btn-submit {
+            display: inline-flex;
+            align-items: center;
+            justify-content: center;
+            gap: 8px;
+            padding: 12px 20px;
+            color: #fff;
+            background: #4b81ff;
+            box-shadow: 0 12px 30px rgba(75,129,255,0.18);
+            text-decoration: none;
+        }
+        .btn-add-task:hover,
+        .btn-action:hover,
+        .btn-progress:hover,
+        .btn-submit:hover {
+            transform: translateY(-1px);
+            background: #1a63e8;
         }
         .btn-remove {
-            background: #dc3545;
+            background: #ff5a5f;
             color: white;
-            border: none;
-            padding: 8px 16px;
-            border-radius: 6px;
-            cursor: pointer;
             font-size: 14px;
+            padding: 10px 16px;
             position: absolute;
-            top: 10px;
-            right: 10px;
-            transition: background 0.3s;
+            top: 18px;
+            right: 18px;
         }
         .btn-remove:hover {
-            background: #c82333;
+            background: #d83b45;
+        }
+        .btn-add {
+            background-color: #fc8b01;
+            color: white;
+            padding: 10px 16px;
+        }
+        .btn-add:hover {
+            background-color: #e57a00;
         }
         .form-actions {
             text-align: center;
             margin-top: 30px;
         }
         .btn-submit {
-            background: linear-gradient(135deg, #007bff, #0056b3);
-            color: white;
-            border: none;
-            padding: 15px 30px;
-            border-radius: 8px;
-            cursor: pointer;
+            padding: 16px 34px;
             font-size: 18px;
-            font-weight: bold;
-            transition: transform 0.2s;
+            letter-spacing: 0.02em;
+            box-shadow: 0 18px 36px rgba(0,0,0,0.14);
         }
-        .btn-submit:hover {
-            transform: translateY(-2px);
+        .promo-grid {
+            display: grid;
+            gap: 20px;
+            grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
+            margin-top: 30px;
         }
-        .promo-section {
-            margin-bottom: 40px;
+        .promo-card {
+            background: #ffffff;
+            padding: 28px 24px;
+            border-radius: 18px;
+            border: 1px solid rgba(34,80,161,0.1);
+            box-shadow: 0 18px 40px rgba(27,72,163,0.05);
         }
-        .promo-title {
-            font-size: 20px;
-            font-weight: bold;
-            color: #074383;
-            margin-bottom: 15px;
+        .promo-card .promo-title {
+            font-size: 22px;
+            font-weight: 800;
+            margin-bottom: 10px;
+            color: #10316b;
         }
-        .tp-item {
-            background: #f9f9f9;
-            padding: 15px;
-            margin-bottom: 15px;
-            border-radius: 6px;
-            border-left: 4px solid #fc8b01;
-        }
-        .tp-title {
-            font-weight: bold;
-            color: #333;
-        }
-        .tp-desc {
-            color: #666;
-            margin: 5px 0;
-        }
-        .tache-item {
-            background: #fff;
-            padding: 10px;
-            margin: 5px 0;
-            border-radius: 4px;
-            border-left: 3px solid #28a745;
-        }
-        .btn-add {
-            background-color: #fc8b01;
-            color: white;
-            border: none;
-            padding: 8px 12px;
-            border-radius: 4px;
-            cursor: pointer;
+        .promo-card .promo-meta {
             font-size: 14px;
+            color: #4f5f7c;
+            margin-bottom: 24px;
+            line-height: 1.6;
         }
-        .btn-add:hover {
-            background-color: #e67e00;
+        .promo-actions {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 10px;
         }
         .error, .success {
-            padding: 12px;
-            border-radius: 4px;
-            margin-bottom: 20px;
+            padding: 16px 18px;
+            border-radius: 12px;
+            margin-bottom: 26px;
+            font-weight: 600;
         }
         .error {
-            color: #dc3545;
+            color: #842029;
             background: #f8d7da;
-            border-left: 4px solid #dc3545;
+            border-left: 5px solid #d9534f;
         }
         .success {
-            color: #155724;
-            background: #d4edda;
-            border-left: 4px solid #28a745;
+            color: #0f5132;
+            background: #d1e7dd;
+            border-left: 5px solid #198754;
         }
     </style>
 </head>
@@ -372,12 +387,13 @@ foreach ($promotions as $promo) {
                 <div id="taches-container">
                     <h3>Tâches associées</h3>
                     <div class="tache-group" data-index="0">
+                        <button type="button" class="btn-remove" style="display:none;">Supprimer</button>
                         <div class="form-group">
-                            <label>Libellé de la tâche *</label>
+                            <label class="task-label-libelle">Libellé de la tâche 1 *</label>
                             <input type="text" name="taches[0][libelle]" required>
                         </div>
                         <div class="form-group">
-                            <label>Description de la tâche</label>
+                            <label class="task-label-description">Description de la tâche 1</label>
                             <textarea name="taches[0][description]"></textarea>
                         </div>
                         <div class="form-row">
@@ -392,6 +408,56 @@ foreach ($promotions as $promo) {
                             <div class="form-group half">
                                 <label>Ordre</label>
                                 <input type="number" name="taches[0][ordre]" value="1" min="1">
+                            </div>
+                        </div>
+                    </div>
+                    <div class="tache-group" data-index="1">
+                        <button type="button" class="btn-remove" style="display:none;">Supprimer</button>
+                        <div class="form-group">
+                            <label class="task-label-libelle">Libellé de la tâche 2</label>
+                            <input type="text" name="taches[1][libelle]">
+                        </div>
+                        <div class="form-group">
+                            <label class="task-label-description">Description de la tâche 2</label>
+                            <textarea name="taches[1][description]"></textarea>
+                        </div>
+                        <div class="form-row">
+                            <div class="form-group half">
+                                <label>Priorité</label>
+                                <select name="taches[1][priorite]">
+                                    <option value="1">Basse</option>
+                                    <option value="2">Moyenne</option>
+                                    <option value="3">Haute</option>
+                                </select>
+                            </div>
+                            <div class="form-group half">
+                                <label>Ordre</label>
+                                <input type="number" name="taches[1][ordre]" value="2" min="1">
+                            </div>
+                        </div>
+                    </div>
+                    <div class="tache-group" data-index="2">
+                        <button type="button" class="btn-remove" style="display:none;">Supprimer</button>
+                        <div class="form-group">
+                            <label class="task-label-libelle">Libellé de la tâche 3</label>
+                            <input type="text" name="taches[2][libelle]">
+                        </div>
+                        <div class="form-group">
+                            <label class="task-label-description">Description de la tâche 3</label>
+                            <textarea name="taches[2][description]"></textarea>
+                        </div>
+                        <div class="form-row">
+                            <div class="form-group half">
+                                <label>Priorité</label>
+                                <select name="taches[2][priorite]">
+                                    <option value="1">Basse</option>
+                                    <option value="2">Moyenne</option>
+                                    <option value="3">Haute</option>
+                                </select>
+                            </div>
+                            <div class="form-group half">
+                                <label>Ordre</label>
+                                <input type="number" name="taches[2][ordre]" value="3" min="1">
                             </div>
                         </div>
                     </div>
@@ -412,7 +478,7 @@ foreach ($promotions as $promo) {
                 <?php else: ?>
                     <?php foreach ($tps_par_promo[$promo['id_promotion']] as $tp): ?>
                         <div class="tp-item">
-                            <div class="tp-title"><?php echo htmlspecialchars($tp['titre']); ?> <a href="confirm_delete.php?type=tp&id=<?php echo $tp['id_tp']; ?>" class="btn-delete" style="float:right; font-size:14px;">Supprimer TP</a></div>
+                            <div class="tp-title"><?php echo htmlspecialchars($tp['titre']); ?></div>
                             <div class="tp-desc"><?php echo htmlspecialchars($tp['description']); ?></div>
                             
                             <h4>Tâches :</h4>
@@ -421,7 +487,7 @@ foreach ($promotions as $promo) {
                             <?php else: ?>
                                 <?php foreach ($tp['taches'] as $tache): ?>
                                     <div class="tache-item">
-                                        <strong><?php echo htmlspecialchars($tache['libelle']); ?></strong> (Priorité: <?php echo htmlspecialchars(get_priorite_text($tache['priorite'])); ?>, Ordre: <?php echo htmlspecialchars($tache['ordre']); ?>) <a href="confirm_delete.php?type=tache&id=<?php echo $tache['id_tache']; ?>" class="btn-delete" style="float:right; font-size:12px;">×</a><br>
+                                        <strong><?php echo htmlspecialchars($tache['libelle']); ?></strong> (Priorité: <?php echo htmlspecialchars(get_priorite_text($tache['priorite'])); ?>, Ordre: <?php echo htmlspecialchars($tache['ordre']); ?>)<br>
                                         <?php echo htmlspecialchars($tache['description']); ?>
                                     </div>
                                 <?php endforeach; ?>
@@ -448,7 +514,5 @@ foreach ($promotions as $promo) {
             </div>
         <?php endforeach; ?>
     </main>
-
-
 </body>
 </html>
