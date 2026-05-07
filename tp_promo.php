@@ -469,6 +469,7 @@ foreach ($promotions as $promo) {
             </form>
         </div>
 
+<<<<<<< HEAD
         <h2>TP par Promotion</h2>
         <?php foreach ($promotions as $promo): ?>
             <div class="promo-section">
@@ -478,7 +479,7 @@ foreach ($promotions as $promo) {
                 <?php else: ?>
                     <?php foreach ($tps_par_promo[$promo['id_promotion']] as $tp): ?>
                         <div class="tp-item">
-                            <div class="tp-title"><?php echo htmlspecialchars($tp['titre']); ?></div>
+                            <div class="tp-title"><?php echo htmlspecialchars($tp['titre']); ?> <a href="confirm_delete.php?type=tp&id=<?php echo $tp['id_tp']; ?>" class="btn-delete" style="float:right; font-size:14px;">Supprimer TP</a></div>
                             <div class="tp-desc"><?php echo htmlspecialchars($tp['description']); ?></div>
                             
                             <h4>Tâches :</h4>
@@ -487,7 +488,7 @@ foreach ($promotions as $promo) {
                             <?php else: ?>
                                 <?php foreach ($tp['taches'] as $tache): ?>
                                     <div class="tache-item">
-                                        <strong><?php echo htmlspecialchars($tache['libelle']); ?></strong> (Priorité: <?php echo htmlspecialchars(get_priorite_text($tache['priorite'])); ?>, Ordre: <?php echo htmlspecialchars($tache['ordre']); ?>)<br>
+                                        <strong><?php echo htmlspecialchars($tache['libelle']); ?></strong> (Priorité: <?php echo htmlspecialchars(get_priorite_text($tache['priorite'])); ?>, Ordre: <?php echo htmlspecialchars($tache['ordre']); ?>) <a href="confirm_delete.php?type=tache&id=<?php echo $tache['id_tache']; ?>" class="btn-delete" style="float:right; font-size:12px;">×</a><br>
                                         <?php echo htmlspecialchars($tache['description']); ?>
                                     </div>
                                 <?php endforeach; ?>
@@ -513,6 +514,21 @@ foreach ($promotions as $promo) {
                 <?php endif; ?>
             </div>
         <?php endforeach; ?>
+=======
+        <h2>Promotions</h2>
+        <div class="promo-grid">
+            <?php foreach ($promotions as $promo): ?>
+                <div class="promo-card">
+                    <div class="promo-title"><?php echo htmlspecialchars($promo['nom']); ?></div>
+                    <div class="promo-meta"><?php echo count($tps_par_promo[$promo['id_promotion']]) ?> TP en cours</div>
+                    <div class="promo-actions">
+                        <a href="promo_progress.php?id_promotion=<?php echo $promo['id_promotion']; ?>" class="btn-progress">Voir le suivi</a>
+                        <a href="eleves_promo.php?id_promotion=<?php echo $promo['id_promotion']; ?>" class="btn-action">Voir élèves</a>
+                    </div>
+                </div>
+            <?php endforeach; ?>
+        </div>
+>>>>>>> c82fc4817a2f7975b02d31e6c53e42590f9ace2c
     </main>
 </body>
 </html>
