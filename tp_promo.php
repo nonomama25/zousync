@@ -342,6 +342,12 @@ foreach ($promotions as $promo) {
             </div>
         <?php endif; ?>
 
+        <?php if (isset($_GET['success'])): ?>
+            <div class="success">
+                <?= htmlspecialchars($_GET['success']) ?>
+            </div>
+        <?php endif; ?>
+
         <div class="form-container">
             <h2>Ajouter un nouveau TP</h2>
             <form method="post" action="tp_promo.php" id="tp-form">
@@ -406,7 +412,7 @@ foreach ($promotions as $promo) {
                 <?php else: ?>
                     <?php foreach ($tps_par_promo[$promo['id_promotion']] as $tp): ?>
                         <div class="tp-item">
-                            <div class="tp-title"><?php echo htmlspecialchars($tp['titre']); ?></div>
+                            <div class="tp-title"><?php echo htmlspecialchars($tp['titre']); ?> <a href="confirm_delete.php?type=tp&id=<?php echo $tp['id_tp']; ?>" class="btn-delete" style="float:right; font-size:14px;">Supprimer TP</a></div>
                             <div class="tp-desc"><?php echo htmlspecialchars($tp['description']); ?></div>
                             
                             <h4>Tâches :</h4>
@@ -415,7 +421,7 @@ foreach ($promotions as $promo) {
                             <?php else: ?>
                                 <?php foreach ($tp['taches'] as $tache): ?>
                                     <div class="tache-item">
-                                        <strong><?php echo htmlspecialchars($tache['libelle']); ?></strong> (Priorité: <?php echo htmlspecialchars(get_priorite_text($tache['priorite'])); ?>, Ordre: <?php echo htmlspecialchars($tache['ordre']); ?>)<br>
+                                        <strong><?php echo htmlspecialchars($tache['libelle']); ?></strong> (Priorité: <?php echo htmlspecialchars(get_priorite_text($tache['priorite'])); ?>, Ordre: <?php echo htmlspecialchars($tache['ordre']); ?>) <a href="confirm_delete.php?type=tache&id=<?php echo $tache['id_tache']; ?>" class="btn-delete" style="float:right; font-size:12px;">×</a><br>
                                         <?php echo htmlspecialchars($tache['description']); ?>
                                     </div>
                                 <?php endforeach; ?>

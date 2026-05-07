@@ -72,6 +72,20 @@ $eleves = $stmt->fetchAll();
 
     <main class="content">
         <h1>Tous les élèves</h1>
+
+        <?php if (isset($error)): ?>
+            <div class="message error-message">
+                <span class="message-icon">⚠️</span>
+                <span class="message-text"><?php echo $error; ?></span>
+            </div>
+        <?php endif; ?>
+        <?php if (isset($success)): ?>
+            <div class="message success-message">
+                <span class="message-icon">✅</span>
+                <span class="message-text"><?php echo $success; ?></span>
+            </div>
+        <?php endif; ?>
+
         <section>
             <div class="cards-grid">
                 <?php if (empty($eleves)): ?>
@@ -87,10 +101,7 @@ $eleves = $stmt->fetchAll();
                             <div class="card-actions">
                                 <a href="modifeleve.php?id=<?= $e['id'] ?>" class="btn-edit">Modifier</a>
                                 <a href="progression.php?id_eleve=<?= $e['id'] ?>" class="btn-view">Voir progression</a>
-                                <form method="post" action="deleteeleve.php" style="display:inline;">
-                                    <input type="hidden" name="id" value="<?= $e['id'] ?>">
-                                    <button type="submit" class="btn-delete" style="border:none; cursor:pointer; background:none; padding:0;">Supprimer</button>
-                                </form>
+                                <a href="confirm_delete.php?type=eleve&id=<?= $e['id'] ?>" class="btn-delete">×</a>
                             </div>
                         </div>
                     <?php endforeach; ?>

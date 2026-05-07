@@ -85,7 +85,7 @@ $promotions = $pdo->query('SELECT id_promotion, nom FROM promotion ORDER BY nom'
     <link rel="stylesheet" href="menupromo.css">
     <style>
         .form-container {
-            max-width: 600px;
+            max-width: 600px;z 
             margin: 50px auto;
             background: linear-gradient(135deg, #f5f7fa 0%, #c3cfe2 100%);
             padding: 40px;

@@ -152,19 +152,31 @@ body {
 }
 
 .btn-delete {
-    background-color: #fc8b01;
-    color: white;
-    padding: 6px 12px;
-    border-radius: 4px;
-    text-decoration: none;
-    font-size: 13px;
+    background: white;
+    color: #e53e3e;
+    border: 2px solid #e53e3e;
+    width: 24px;
+    height: 24px;
+    font-size: 16px;
     font-weight: bold;
-    border: none;
     cursor: pointer;
+    transition: all 0.3s ease;
+    border-radius: 50%;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    box-shadow: 0 2px 4px rgba(0,0,0,.1);
 }
 
 .btn-delete:hover {
-    background-color: #fc8b01;
+    background: #e53e3e;
+    color: white;
+    transform: scale(1.1);
+    box-shadow: 0 4px 8px rgba(229, 62, 62, 0.4);
+}
+
+.btn-delete:active {
+    transform: scale(1);
 }
 
 .btn-view {
@@ -181,6 +193,39 @@ body {
 
 .btn-view:hover {
     background-color: #218838;
+}
+
+.message {
+    display: flex;
+    align-items: center;
+    gap: 12px;
+    padding: 16px 20px;
+    border-radius: 12px;
+    margin-top: 16px;
+    font-weight: 500;
+    font-size: 16px;
+    box-shadow: 0 4px 12px rgba(0,0,0,.1);
+    border: 1px solid;
+}
+
+.error-message {
+    background: linear-gradient(135deg, #fed7d7, #feb2b2);
+    color: #c53030;
+    border-color: #fc8181;
+}
+
+.success-message {
+    background: linear-gradient(135deg, #c6f6d5, #9ae6b4);
+    color: #276749;
+    border-color: #68d391;
+}
+
+.message-icon {
+    font-size: 24px;
+}
+
+.message-text {
+    flex: 1;
 }
 
 .create-btn {

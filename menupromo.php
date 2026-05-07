@@ -120,9 +120,12 @@ try {
                     <p>Aucune promotion trouvée. Ajoutez-en une ci-dessus.</p>
                 <?php else: ?>
                     <?php foreach ($promotions as $p): ?>
-                        <a class="card" href="eleves_promo.php?id_promotion=<?= htmlspecialchars($p['id_promotion']) ?>">
-                            <?= htmlspecialchars($p['nom']) ?>
-                        </a>
+                        <div class="card">
+                            <a href="eleves_promo.php?id_promotion=<?= htmlspecialchars($p['id_promotion']) ?>">
+                                <?= htmlspecialchars($p['nom']) ?>
+                            </a>
+                            <a href="confirm_delete.php?type=promotion&id=<?= htmlspecialchars($p['id_promotion']) ?>" class="btn-delete">×</a>
+                        </div>
                     <?php endforeach; ?>
                 <?php endif; ?>
             </div>
